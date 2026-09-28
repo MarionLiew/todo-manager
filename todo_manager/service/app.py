@@ -1,4 +1,4 @@
-"""FastAPI service exposing the todo-os store to local Hermes and remote devices over Tailnet."""
+"""FastAPI service exposing the todo-manager store to local Hermes and remote devices over Tailnet."""
 from __future__ import annotations
 
 import os
@@ -18,7 +18,7 @@ class TaskIn(BaseModel):
     project_id: str | None = None
     dry_run: bool = False
 
-DEFAULT_DB = str(Path.home() / ".todo-os" / "todo.db")
+DEFAULT_DB = str(Path.home() / ".todo-manager" / "todo.db")
 
 
 def _api_key() -> str:
@@ -32,7 +32,7 @@ def _db_path(override: str | None) -> str:
 
 
 def create_app(db_path: str | None = None) -> FastAPI:
-    from todo_os.store.repository import Store, connect
+    from todo_manager.store.repository import Store, connect
 
     def store_dep():
         store = Store(connect(_db_path(db_path)))

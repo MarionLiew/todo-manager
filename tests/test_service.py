@@ -1,4 +1,4 @@
-"""Service tests for todo-os FastAPI app (local + tailnet-bound server)."""
+"""Service tests for todo-manager FastAPI app (local + tailnet-bound server)."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from todo_os.service.app import create_app
+from todo_manager.service.app import create_app
 
 API_KEY = "test-key-123"
 

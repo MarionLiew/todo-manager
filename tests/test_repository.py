@@ -1,11 +1,11 @@
-"""Tests for the todo-os repository data layer."""
+"""Tests for the todo-manager repository data layer."""
 from __future__ import annotations
 
 import sqlite3
 
 import pytest
 
-from todo_os.store.repository import Store, connect
+from todo_manager.store.repository import Store, connect
 
 
 @pytest.fixture()

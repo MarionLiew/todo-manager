@@ -1,4 +1,4 @@
-"""CLI entrypoint for todo-os: run the server locally or bound to a tailnet interface, and inspect the DB."""
+"""CLI entrypoint for todo-manager: run the server locally or bound to a tailnet interface, and inspect the DB."""
 from __future__ import annotations
 
 import os
@@ -8,12 +8,12 @@ from pathlib import Path
 import click
 import uvicorn
 
-from todo_os.service.app import DEFAULT_DB, create_app
+from todo_manager.service.app import DEFAULT_DB, create_app
 
 
 @click.group()
 def cli() -> None:
-    """todo-os: local-first personal todo/project database."""
+    """todo-manager: local-first personal todo/project database."""
 
 
 def _load_env(db_dir: Path) -> None:
@@ -31,7 +31,7 @@ def _load_env(db_dir: Path) -> None:
 @click.option("--port", default=8788, show_default=True, help="Bind port.")
 @click.option("--db", default=DEFAULT_DB, show_default=True, help="SQLite path.")
 def serve(host: str, port: int, db: str) -> None:
-    """Run the todo-os HTTP service."""
+    """Run the todo-manager HTTP service."""
     _load_env(Path(db).parent)
     if not os.environ.get("TODO_OS_API_KEY"):
         click.echo("TODO_OS_API_KEY not set; refusing to start unauthenticated.", err=True)
@@ -43,7 +43,7 @@ def serve(host: str, port: int, db: str) -> None:
 @click.option("--db", default=DEFAULT_DB, show_default=True)
 def health(db: str) -> None:
     """Open the DB and confirm the schema is valid."""
-    from todo_os.store.repository import Store, connect
+    from todo_manager.store.repository import Store, connect
 
     store = Store(connect(db))
     tables = store.conn.execute(

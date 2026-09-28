@@ -1,12 +1,12 @@
-# todo-os
+# todo-manager
 
 Local-first personal todo/project database with a data layer, a Tailnet-bound
 HTTP service (kicked off later), and an Apple Reminders sync driver.
 
 ## Layout
-- `todo_os/store/` — SQLite data layer (schema, migrations, repository)
-- `todo_os/service/` — FastAPI service (later)
-- `todo_os/sync/reminders.py` — Reminders one-way push driver (later)
+- `todo_manager/store/` — SQLite data layer (schema, migrations, repository)
+- `todo_manager/service/` — FastAPI service (later)
+- `todo_manager/sync/reminders.py` — Reminders one-way push driver (later)
 
 ## Data model (GTD shapes as data, not hardcoded)
 - tasks: id, title, notes, status, priority, due, created/updated/completed

@@ -3,7 +3,7 @@ requires = ["hatchling>=1.26"]
 build-backend = "hatchling.build"
 
 [project]
-name = "todo-os"
+name = "todo-manager"
 version = "0.1.0"
 description = "Local-first personal todo/project database"
 readme = "README.md"
@@ -16,10 +16,10 @@ dependencies = ["fastapi>=0.141", "pydantic>=2.10", "uvicorn>=0.34", "httpx>=0.2
 dev = ["pytest", "pytest-cov", "ruff"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["todo_os"]
+packages = ["todo_manager"]
 
 [project.scripts]
-todo-os = "todo_os.cli:cli"
+todo-manager = "todo_manager.cli:cli"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

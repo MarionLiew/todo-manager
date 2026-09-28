@@ -1,4 +1,4 @@
-"""Repository layer for todo-os. All mutations go through here with audit + dry-run gate."""
+"""Repository layer for todo-manager. All mutations go through here with audit + dry-run gate."""
 from __future__ import annotations
 
 import sqlite3
@@ -6,7 +6,7 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
-from todo_os.store.schema import init_db
+from todo_manager.store.schema import init_db
 
 VALID_STATUS = {"open", "done", "deferred", "cancelled"}
 VALID_PRIORITY = {"none", "low", "medium", "high"}

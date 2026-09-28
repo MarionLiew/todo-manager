@@ -1,4 +1,4 @@
-"""SQLite schema for todo-os. Zero-dependency (stdlib sqlite3)."""
+"""SQLite schema for todo-manager. Zero-dependency (stdlib sqlite3)."""
 from __future__ import annotations
 
 SCHEMA = """
