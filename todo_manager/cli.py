@@ -31,12 +31,37 @@ def _load_env(db_dir: Path) -> None:
 @click.option("--port", default=8788, show_default=True, help="Bind port.")
 @click.option("--db", default=DEFAULT_DB, show_default=True, help="SQLite path.")
 def serve(host: str, port: int, db: str) -> None:
-    """Run the todo-manager HTTP service."""
+    """Run the todo-manager HTTP service (server role)."""
     _load_env(Path(db).parent)
+    if os.environ.get("TODO_MANAGER_URL"):
+        click.echo(
+            "Refusing to start server: this device is configured as a CLIENT "
+            "(TODO_MANAGER_URL is set). The server role belongs to the host that "
+            "owns the database. Remove TODO_MANAGER_URL from .env to serve here.",
+            err=True,
+        )
+        sys.exit(2)
     if not os.environ.get("TODO_OS_API_KEY"):
         click.echo("TODO_OS_API_KEY not set; refusing to start unauthenticated.", err=True)
         sys.exit(1)
     uvicorn.run(create_app(db), host=host, port=port, log_level="info")
+
+
+@cli.command()
+@click.option("--db", default=DEFAULT_DB, show_default=True)
+def role(db: str) -> None:
+    """Show whether this installation is a server or a client, based on .env."""
+    _load_env(Path(db).parent)
+    if os.environ.get("TODO_MANAGER_URL"):
+        click.echo("role=client")
+        click.echo(f"  server_url={os.environ.get('TODO_MANAGER_URL')}")
+        click.echo("  client api key present="
+                   + str(bool(os.environ.get("TODO_MANAGER_API_KEY"))))
+    elif os.environ.get("TODO_OS_API_KEY"):
+        click.echo("role=server")
+        click.echo("  owns the database, serves on 0.0.0.0:8788")
+    else:
+        click.echo("role=unconfigured (no API key; cannot serve or act as client)")
 
 
 @cli.command()
