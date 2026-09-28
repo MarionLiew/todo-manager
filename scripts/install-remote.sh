@@ -1,11 +1,10 @@
 #!/bin/bash
-# todo-manager — one-time remote deploy script.
+# todo-manager — one-time remote deploy script (self-contained).
 #
 # Run ONCE on any Hermes device that should reach the host's todo-manager
-# service over Tailnet. It:
-#   1. copies the todo-manager skill into the local Hermes skills dir
-#   2. creates a local venv and installs the package
-#   3. writes ~/.todo-manager/.env with the host URL + the API key you passed
+# service over Tailnet. Self-contained: if the full repo isn't on disk it
+# clones it, then builds the venv and writes the connection config. Ships
+# alongside SKILL.md (hermes skills install delivers both).
 #
 # Usage:
 #   bash install-remote.sh --url http://100.105.74.36:8788 --key <KEY>
@@ -14,6 +13,8 @@ set -euo pipefail
 URL=""
 KEY=""
 HERMES_SKILLS="${HERMES_SKILLS:-$HOME/.hermes/skills}"
+REPO_DIR="$HOME/todo-manager"
+GIT_REPO="https://github.com/MarionLiew/todo-manager.git"
 
 usage() { echo "usage: $0 --url <server-url> --key <api-key>"; exit 1; }
 while [[ $# -gt 0 ]]; do
@@ -25,37 +26,45 @@ while [[ $# -gt 0 ]]; do
 done
 [[ -n "$URL" && -n "$KEY" ]] || usage
 
-SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-echo "==> source dir: $SRC"
+# 1. Ensure the full repo (with todo_manager Python package) is on disk.
+if [ ! -f "$REPO_DIR/pyproject.toml" ]; then
+  echo "==> cloning todo-manager repo into $REPO_DIR"
+  git clone "$GIT_REPO" "$REPO_DIR"
+else
+  echo "==> repo already present at $REPO_DIR"
+fi
+cd "$REPO_DIR"
 
-# 1. Install as a Hermes skill (single copy).
-SKILL_DEST="$HERMES_SKILLS/com.marion.todo-manager"
+# 2. Copy the skill (SKILL.md + scripts) into Hermes skills.
+SKILL_DEST="$HERMES_SKILLS/todo-manager"
 mkdir -p "$HERMES_SKILLS"
 rm -rf "$SKILL_DEST"
-cp -R "$SRC" "$SKILL_DEST"
-echo "==> skill installed at $SKILL_DEST"
+mkdir -p "$SKILL_DEST/scripts"
+cp "$REPO_DIR/SKILL.md" "$SKILL_DEST/"
+cp "$REPO_DIR/scripts/install-remote.sh" "$SKILL_DEST/scripts/"
+echo "==> skill files under $SKILL_DEST"
 
-# 2. Local venv + package.
-cd "$SRC"
+# 3. Python package + venv.
 if command -v uv >/dev/null 2>&1; then
-  uv sync --dev --no-progress
+  uv sync --no-progress
   BIN="uv run todo-manager"
 else
   python3 -m venv .venv
-  ./.venv/bin/pip install -q -e . 2>/dev/null || ./.venv/bin/pip install -q .
+  ./.venv/bin/pip install -q -e .
   BIN=".venv/bin/todo-manager"
 fi
 echo "==> package ready ($BIN)"
 
-# 3. Connection config.
+# 4. Connection config (client role).
 mkdir -p "$HOME/.todo-manager"
 printf 'TODO_MANAGER_URL=%s\nTODO_MANAGER_API_KEY=%s\n' "$URL" "$KEY" > "$HOME/.todo-manager/.env"
 chmod 600 "$HOME/.todo-manager/.env"
-echo "==> wrote $HOME/.todo-manager/.env"
+echo "==> wrote $HOME/.todo-manager/.env (client role)"
 
 echo
-echo "DONE. Verify connectivity:"
-echo "  $BIN sync remote health"
-echo "  $BIN sync remote list"
+echo "DONE. Verify:"
+echo "  cd $REPO_DIR && $BIN role                # expect 'role=client'"
+echo "  cd $REPO_DIR && $BIN sync remote health  # expect {\"status\":\"ok\"}"
+echo "  cd $REPO_DIR && $BIN sync remote list    # host's tasks"
 echo
-echo "Tip: add TODO_MANAGER_URL / TODO_MANAGER_API_KEY to your shell env, or source "$HOME/.todo-manager/.env"."
+echo "Keep $HOME/.todo-manager/.env private."

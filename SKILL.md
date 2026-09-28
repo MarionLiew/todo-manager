@@ -79,18 +79,19 @@ todo-manager sync remote add "审计在线表" --context 工作 --due "2026-09-2
 A remote machine installs the todo-manager skill in one step:
 
 ```bash
-hermes skills install https://raw.githubusercontent.com/MarionLiew/todo-manager/main/SKILL.md --name todo-manager
+hermes skills install https://raw.githubusercontent.com/MarionLiew/todo-manager/main/SKILL.md --name todo-manager --force
 ```
 
-This copies only `SKILL.md`. After it lands, the agent on that device reads this
-file and follows the deployment steps to become a working **client** of the host
-service (see "Becoming a client" below) — rebuilding the venv, installing the
-package, and writing `~/.todo-manager/.env` with the host URL + API key.
+`--force` is required: the install's security scanner flags this skill's
+legitimate patterns (git clone during deploy, binding 0.0.0.0 for Tailnet,
+uv usage, the hardcoded tailnet IP) as high-risk. They are the skill's normal
+operation, not malware — review with `hermes skills inspect <url>` first, then
+`--force` installs. Note `hermes skills install` still copies only SKILL.md +
+`scripts/install-remote.sh` (not the Python package or your data).
 
-> Because install delivers just SKILL.md, this skill's body carries the full
-> deployment recipe. That is by design: one project, one skill, one source of
-> truth — and every Hermes that loads it can reconstruct the client from this
-> same file.
+After it lands, the agent on that device becomes a working **client** by
+running the self-contained `install-remote.sh` (clone repo → build venv → write
+`~/.todo-manager/.env`).
 
 ### Becoming a client (natural-language recipe)
 
@@ -113,10 +114,12 @@ An agent on another device that has loaded this skill should do all of these:
 5. The same `sync remote add/list/health` commands now operate read/write on the
    host's database — both machines maintain the same todo store.
 
-The one-shot script `scripts/install-remote.sh` automates steps 1–4:
+The one-shot `scripts/install-remote.sh` automates all the above — it clones the
+repo if missing, builds the venv, writes `~/.todo-manager/.env`, and copies the
+skill files into Hermes skills:
 
 ```bash
-bash scripts/install-remote.sh --url http://100.105.74.36:8788 --key <KEY>
+bash <skill-dir>/scripts/install-remote.sh --url http://100.105.74.36:8788 --key <KEY>
 ```
 
 ## Dev
