@@ -1,0 +1,54 @@
+Traceback (most recent call last):
+  File "/Users/marionliew/todo-os/.venv/bin/todo-os", line 10, in <module>
+    sys.exit(cli())
+             ~~~^^
+  File "/Users/marionliew/todo-os/.venv/lib/python3.13/site-packages/click/core.py", line 1631, in __call__
+    return self.main(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/marionliew/todo-os/.venv/lib/python3.13/site-packages/click/core.py", line 1552, in main
+    rv = self.invoke(ctx)
+  File "/Users/marionliew/todo-os/.venv/lib/python3.13/site-packages/click/core.py", line 2032, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/marionliew/todo-os/.venv/lib/python3.13/site-packages/click/core.py", line 1415, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/marionliew/todo-os/.venv/lib/python3.13/site-packages/click/core.py", line 910, in invoke
+    return callback(*args, **kwargs)
+  File "/Users/marionliew/todo-os/todo_os/cli.py", line 34, in serve
+    _load_env(Path(db).parent)
+              ^^^^
+NameError: name 'Path' is not defined
+Traceback (most recent call last):
+  File "/Users/marionliew/todo-os/.venv/bin/todo-os", line 10, in <module>
+    sys.exit(cli())
+             ~~~^^
+  File "/Users/marionliew/todo-os/.venv/lib/python3.13/site-packages/click/core.py", line 1631, in __call__
+    return self.main(*args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/marionliew/todo-os/.venv/lib/python3.13/site-packages/click/core.py", line 1552, in main
+    rv = self.invoke(ctx)
+  File "/Users/marionliew/todo-os/.venv/lib/python3.13/site-packages/click/core.py", line 2032, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+                           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/marionliew/todo-os/.venv/lib/python3.13/site-packages/click/core.py", line 1415, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/marionliew/todo-os/.venv/lib/python3.13/site-packages/click/core.py", line 910, in invoke
+    return callback(*args, **kwargs)
+  File "/Users/marionliew/todo-os/todo_os/cli.py", line 34, in serve
+    _load_env(Path(db).parent)
+              ^^^^
+NameError: name 'Path' is not defined
+INFO:     Started server process [29786]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8788 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [29786]
+INFO:     Started server process [29948]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8788 (Press CTRL+C to quit)
