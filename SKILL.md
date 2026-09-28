@@ -74,6 +74,51 @@ s.add_task('审计在线表', due='2026-09-28', priority='high', contexts=['工�
 todo-manager sync remote add "审计在线表" --context 工作 --due "2026-09-28" --priority high
 ```
 
+## Installing this skill on another Hermes device (one command)
+
+A remote machine installs the todo-manager skill in one step:
+
+```bash
+hermes skills install https://raw.githubusercontent.com/MarionLiew/todo-manager/main/SKILL.md --name todo-manager
+```
+
+This copies only `SKILL.md`. After it lands, the agent on that device reads this
+file and follows the deployment steps to become a working **client** of the host
+service (see "Becoming a client" below) — rebuilding the venv, installing the
+package, and writing `~/.todo-manager/.env` with the host URL + API key.
+
+> Because install delivers just SKILL.md, this skill's body carries the full
+> deployment recipe. That is by design: one project, one skill, one source of
+> truth — and every Hermes that loads it can reconstruct the client from this
+> same file.
+
+### Becoming a client (natural-language recipe)
+
+An agent on another device that has loaded this skill should do all of these:
+
+1. **Clone the repo** into `~/todo-manager` (HTTPS; SSH port 22 is blocked on
+   this user's network): `git clone https://github.com/MarionLiew/todo-manager.git ~/todo-manager`.
+   If the directory already exists, `cd` in and `git pull`.
+2. **Install the Python package** with `uv sync --dev` (or fall back to
+   `python3 -m venv .venv && .venv/bin/pip install -e .` if `uv` is absent).
+3. **Write the connection config** to `~/.todo-manager/.env` (chmod 600):
+   ```
+   TODO_MANAGER_URL=http://100.105.74.36:8788
+   TODO_MANAGER_API_KEY=<the shared API key, obtained from the host>
+   ```
+   Tailscale must be up on this device so it can reach `100.105.74.36`.
+4. **Verify**: `todo-manager role` prints `role=client`, then
+   `todo-manager sync remote health` returns `{"status":"ok"}` and
+   `todo-manager sync remote list` shows the host's tasks.
+5. The same `sync remote add/list/health` commands now operate read/write on the
+   host's database — both machines maintain the same todo store.
+
+The one-shot script `scripts/install-remote.sh` automates steps 1–4:
+
+```bash
+bash scripts/install-remote.sh --url http://100.105.74.36:8788 --key <KEY>
+```
+
 ## Dev
 
 ```bash
