@@ -1,0 +1,15 @@
+# runtime
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+dist/
+build/
+
+# data & secrets
+*.db
+*.sqlite
+*.sqlite3
+.todo-os/
+.env
+TODO_OS_API_KEY

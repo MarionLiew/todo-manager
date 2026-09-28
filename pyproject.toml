@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "todo-os"
+version = "0.1.0"
+description = "Local-first personal todo/project database"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "Marion Liew"}]
+dependencies = ["fastapi>=0.141", "pydantic>=2.10", "uvicorn>=0.34", "httpx>=0.28", "click>=8.1"]
+
+[dependency-groups]
+dev = ["pytest", "pytest-cov", "ruff"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["todo_os"]
+
+[project.scripts]
+todo-os = "todo_os.cli:cli"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
